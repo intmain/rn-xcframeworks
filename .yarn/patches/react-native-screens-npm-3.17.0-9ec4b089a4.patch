@@ -1,0 +1,13 @@
+diff --git a/ios/RNSScreenStackHeaderConfig.mm b/ios/RNSScreenStackHeaderConfig.mm
+index 2cdcabe838513f9e5589ff1d57061a1059f01f3e..6d690aa8c5f4b3f82054a2c352f0cb5c4fa04f9c 100644
+--- a/ios/RNSScreenStackHeaderConfig.mm
++++ b/ios/RNSScreenStackHeaderConfig.mm
+@@ -439,7 +439,7 @@ + (void)updateViewController:(UIViewController *)vc
+   if (!shouldHide && !config.translucent) {
+     // when nav bar is not translucent we chage edgesForExtendedLayout to avoid system laying out
+     // the screen underneath navigation controllers
+-    vc.edgesForExtendedLayout = UIRectEdgeNone;
++    vc.edgesForExtendedLayout = UIRectEdgeLeft | UIRectEdgeRight | UIRectEdgeBottom;
+   } else {
+     // system default is UIRectEdgeAll
+     vc.edgesForExtendedLayout = UIRectEdgeAll;

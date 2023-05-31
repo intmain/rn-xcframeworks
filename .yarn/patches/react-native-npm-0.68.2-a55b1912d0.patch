@@ -1,0 +1,13 @@
+diff --git a/ReactCommon/hermes/inspector/chrome/Connection.cpp b/ReactCommon/hermes/inspector/chrome/Connection.cpp
+index 7101eb22473b4af616888b27ed5387bbe78752cc..33794db54d7d0bfd5e12fc0578f29f58ebeda0bf 100644
+--- a/ReactCommon/hermes/inspector/chrome/Connection.cpp
++++ b/ReactCommon/hermes/inspector/chrome/Connection.cpp
+@@ -999,7 +999,7 @@ Connection::Impl::makePropsFromValue(
+         jsi::Value propValue = obj.getProperty(runtime, propName);
+         desc.value = m::runtime::makeRemoteObject(
+             runtime, propValue, objTable_, objectGroup);
+-      } catch (const jsi::JSError &err) {
++      } catch (...) {
+         // We fetched a property with a getter that threw. Show a placeholder.
+         // We could have added additional info, but the UI quickly gets messy.
+         desc.value = m::runtime::makeRemoteObject(

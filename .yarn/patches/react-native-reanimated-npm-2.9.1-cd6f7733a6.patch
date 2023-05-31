@@ -1,0 +1,24 @@
+diff --git a/ios/LayoutReanimation/REAUIManager.mm b/ios/LayoutReanimation/REAUIManager.mm
+index 16ed327a7cfa17ec406891d8a40ab02abbe99761..81cdf18f6d33c9ad675f943d98a34d0218141862 100644
+--- a/ios/LayoutReanimation/REAUIManager.mm
++++ b/ios/LayoutReanimation/REAUIManager.mm
+@@ -28,13 +28,14 @@ - (void)_manageChildren:(NSNumber *)containerTag
+                                                     atIndices:(NSArray<NSNumber *> *)atIndices;
+ @end
+ 
+-@implementation REAUIManager
++@implementation REAUIManager {
++  NSMutableDictionary<NSNumber *, NSMutableSet<id<RCTComponent>> *> *_toBeRemovedRegister;
++  NSMutableDictionary<NSNumber *, NSNumber *> *_parentMapper;
++  REAAnimationsManager *_animationsManager;
++  std::weak_ptr<reanimated::Scheduler> _scheduler;
++}
+ 
+ BOOL blockSetter = false;
+-NSMutableDictionary<NSNumber *, NSMutableSet<id<RCTComponent>> *> *_toBeRemovedRegister;
+-NSMutableDictionary<NSNumber *, NSNumber *> *_parentMapper;
+-REAAnimationsManager *_animationsManager;
+-std::weak_ptr<reanimated::Scheduler> _scheduler;
+ 
+ + (NSString *)moduleName
+ {
