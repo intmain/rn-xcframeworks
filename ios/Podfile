@@ -15,11 +15,7 @@ $flipper_configurations = [
 ]
 
 target 'RNPrebuild' do
-  native_modules_config = get_react_native_config!({
-    'react-native-flipper': {
-      'configurations': $flipper_configurations
-    }
-  })
+  native_modules_config = get_react_native_config!()
   config = use_native_modules!(native_modules_config)
 
 
@@ -30,19 +26,19 @@ target 'RNPrebuild' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  use_flipper!({
-    'Flipper' => '0.166.0', # should match the version of your Flipper client app
-    'Flipper-Glog' => '0.5.0.5',
-    'Flipper-DoubleConversion' => '3.2.0.1'
-    }
-  )
+  # use_flipper!({
+  #   'Flipper' => '0.166.0', # should match the version of your Flipper client app
+  #   'Flipper-Glog' => '0.5.0.5',
+  #   'Flipper-DoubleConversion' => '3.2.0.1'
+  #   }
+  # )
 end
 
 post_install do |installer|
   # For ReactNative
   react_native_post_install(installer)
 
-  flipper_post_install(installer)
+  # flipper_post_install(installer)
 
   # Project EXCLUDED_ARCHS build settings 설정
   projects = installer.aggregate_targets
