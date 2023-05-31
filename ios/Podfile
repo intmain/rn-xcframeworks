@@ -61,9 +61,9 @@ post_install do |installer|
 
   installer.pod_targets.each do |pod|
     if $static_framework.include?(pod.name)
-       def pod.build_type
-           Pod::BuildType.static_library
-       end
+      def pod.build_as_static_framework?;
+        true
+      end
     end
   end
 
