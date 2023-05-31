@@ -10,13 +10,6 @@ exclude_frameworks=("PINCache" "PINOperation" "PINRemoteImage" "Pods_ios_rn_preb
 export SRCROOT=$(pwd)
 export PROJECT=prebuilt1
 
-
-# xcodebuild -create-xcframework \
-#             -framework /Users/leonard/appdev/prebuilt1/ios/prebuilt1-iphonesimulator.xcarchive/Products/Library/Frameworks/RNFlashList.framework \
-#             -framework /Users/leonard/appdev/prebuilt1/ios/prebuilt1-iphoneos.xcarchive/Products/Library/Frameworks/RNFlashList.framework \
-#             -output /Users/leonard/appdev/prebuilt1/ios/Frameworks/RNFlashList.xcframework \
-
-
 function archive() {
  echo 0
     xcodebuild archive \
