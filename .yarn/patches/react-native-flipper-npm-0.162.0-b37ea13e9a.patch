@@ -1,0 +1,10 @@
+diff --git a/react-native-flipper.podspec b/react-native-flipper.podspec
+index a8b591af0e9a641d7ccad432b01d986fa10823e4..423221f4ca0f88a9fe9750c690c862d2668a97cc 100644
+--- a/react-native-flipper.podspec
++++ b/react-native-flipper.podspec
+@@ -27,4 +27,5 @@ Pod::Spec.new do |s|
+   s.requires_arc = true
+   s.compiler_flags = compiler_flags
+   s.dependency "React-Core"
++  s.dependency "FlipperKit"
+ end

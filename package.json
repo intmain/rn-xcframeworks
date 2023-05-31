@@ -32,6 +32,7 @@
   "resolutions": {
     "react-native-screens@3.17.0": "patch:react-native-screens@npm:3.17.0#.yarn/patches/react-native-screens-npm-3.17.0-9ec4b089a4.patch",
     "react-native@0.68.2": "patch:react-native@npm:0.68.2#.yarn/patches/react-native-npm-0.68.2-a55b1912d0.patch",
-    "react-native-reanimated@3.0.0-rc.10": "patch:react-native-reanimated@npm:3.0.0-rc.10#.yarn/patches/react-native-reanimated-npm-3.0.0-rc.10-c15bbf3a86.patch"
+    "react-native-reanimated@3.0.0-rc.10": "patch:react-native-reanimated@npm:3.0.0-rc.10#.yarn/patches/react-native-reanimated-npm-3.0.0-rc.10-c15bbf3a86.patch",
+    "react-native-flipper@0.162.0": "patch:react-native-flipper@npm:0.162.0#.yarn/patches/react-native-flipper-npm-0.162.0-b37ea13e9a.patch"
   }
 }
