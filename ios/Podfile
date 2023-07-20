@@ -7,14 +7,8 @@ platform :ios, '14.0'
 inhibit_all_warnings!
 use_frameworks! :linkage => :static
 
-$static_framework = ['CocoaAsyncSocket', 'Flipper', 'Flipper-Boost-iOSX', 'Flipper-DoubleConversion', 'Flipper-Fmt', 'Flipper-Folly', 'Flipper-Glog', 'Flipper-PeerTalk', 'Flipper-RSocket', 'FlipperKit', 'OpenSSL-Universal', 'SocketRocket', 'YogaKit']
-
-$flipper_configurations = [
- 'Debug',
- 'Release'
-]
-
 target 'RNPrebuild' do
+
   native_modules_config = get_react_native_config!()
   config = use_native_modules!(native_modules_config)
 
@@ -25,20 +19,12 @@ target 'RNPrebuild' do
     :fabric_enabled => false,
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
-
-  # use_flipper!({
-  #   'Flipper' => '0.166.0', # should match the version of your Flipper client app
-  #   'Flipper-Glog' => '0.5.0.5',
-  #   'Flipper-DoubleConversion' => '3.2.0.1'
-  #   }
-  # )
 end
+
 
 post_install do |installer|
   # For ReactNative
   react_native_post_install(installer)
-
-  # flipper_post_install(installer)
 
   # Project EXCLUDED_ARCHS build settings 설정
   projects = installer.aggregate_targets
@@ -55,14 +41,6 @@ post_install do |installer|
     project.save()
   end
 
-  installer.pod_targets.each do |pod|
-    if $static_framework.include?(pod.name)
-      def pod.build_as_static_framework?;
-        true
-      end
-    end
-  end
-
   # Sub-Pods Project 설정
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
@@ -75,6 +53,13 @@ post_install do |installer|
       config.build_settings["SWIFT_SUPPRESS_WARNINGS"] = "YES"
       config.build_settings['OTHER_CFLAGS'] = "$(inherited) -Qunused-arguments -w -Xanalyzer -analyzer-disable-all-checks"
       config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = "YES"
+      if ENV['BUILD_FOR_DEBUG'] == 'true'
+        if config.name == 'Release'
+          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
+          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] << 'DEBUG=1'
+        end
+      end
+
       if config.name =~ /Playground/
         # Playground support workaround
         # https://github.com/SnapKit/SnapKit/issues/442#issuecomment-401631932
@@ -107,9 +92,6 @@ post_install do |installer|
     end
   end
 
-  # ...but if you bump iOS deployment target, Flipper barfs again "Time.h:52:17: error: typedef redefinition with different types"
-  # We need to make one crude patch to RCT-Folly - set `__IPHONE_10_0` to our iOS target + 1
-  # https://github.com/facebook/flipper/issues/834
   #
   # 위에 기술된 버그를 방지하기 위해, 해당 파일에 조건을 절대 만족 할 수 없도록 min ver + 1 로 설정. (현재 최소 13 => 14로 설정)
   `sed -i -e  $'s/__IPHONE_10_0/__IPHONE_14_0/' Pods/RCT-Folly/folly/portability/Time.h`
