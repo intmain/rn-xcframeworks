@@ -5,7 +5,7 @@ set -euo pipefail
 export PATH="/usr/local/bin:$PATH"
 export PATH="/opt/homebrew/bin/:$PATH"
 
-exclude_frameworks=("PINCache" "PINOperation" "PINRemoteImage" "Pods_ios_rn_prebuilt" "ios_rn_prebuilt")
+exclude_frameworks=("Pods_RNPrebuild" "RNPrebuild")
 
 export SRCROOT=$(pwd)
 export PROJECT=RNPrebuild
@@ -50,7 +50,12 @@ function create_xcframework() {
         cp -R $resources $SRCROOT/Frameworks/
     done
 
-    tar -cvzf $PROJECT.tar.gz Frameworks
+    # 얘도 복사해서 포함시켜야함.
+    cp -R $SRCROOT/Pods/hermes-engine/destroot/Library/Frameworks/universal/hermes.xcframework $SRCROOT/Frameworks/
+
+    tar -cvzf $PROJECT-$1.tar.gz Frameworks
+
+    ./remove_sections_from_framework.sh ./Frameworks/React.xcframework/ios-arm64/React.framework
 }
 
 function clean() {
@@ -69,11 +74,21 @@ function clean() {
 #     echo 10
 # }
 
-cd $SRCROOT
 #version=$(cat ios-rn-prebuilt.podspec | grep version | sed -n 's/version.=."\(.*\)".*/\1/p' | xargs)
 version=1.0.0
 
-archive
-create_xcframework
-# clean
 # distribute $version
+
+
+
+export BUILD_FOR_DEBUG=true
+pod install
+archive
+create_xcframework "Debug"
+clean
+
+export BUILD_FOR_DEBUG=false
+pod install
+archive
+create_xcframework "Release"
+clean
