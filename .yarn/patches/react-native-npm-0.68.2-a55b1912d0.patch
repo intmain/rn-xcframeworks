@@ -1,3 +1,65 @@
+diff --git a/React/CxxModule/RCTCxxUtils.mm b/React/CxxModule/RCTCxxUtils.mm
+index 03f0ad0c83d8df7a727f5602095a2bc5808774fd..0eef11063cad8669fe5c9d9cb8120e30c77bac5c 100644
+--- a/React/CxxModule/RCTCxxUtils.mm
++++ b/React/CxxModule/RCTCxxUtils.mm
+@@ -17,6 +17,11 @@
+ #import "RCTCxxModule.h"
+ #import "RCTNativeModule.h"
+ 
++#if DEBUG
++#import <cstring>
++#import <cxxabi.h>
++#endif
++
+ namespace facebook {
+ namespace react {
+ 
+@@ -82,6 +87,16 @@
+   } catch (const std::exception &ex) {
+     return errorWithException(ex);
+   } catch (...) {
++    #if DEBUG
++    auto exception = abi::__cxa_current_primary_exception();
++    auto exception_type = abi::__cxa_current_exception_type();
++      
++    if (strstr(exception_type->name(), "JSError") != nullptr) {
++      auto ex = (facebook::jsi::JSError *)exception;
++      return errorWithException(*ex);
++    }
++    #endif
++
+     // On a 64-bit platform, this would catch ObjC exceptions, too, but not on
+     // 32-bit platforms, so we catch those with id exceptions above.
+     return RCTErrorWithMessage(@"non-std C++ exception");
+diff --git a/ReactCommon/cxxreact/NativeToJsBridge.cpp b/ReactCommon/cxxreact/NativeToJsBridge.cpp
+index d59f4ff98ae756d4c557da05770c4772b3f51648..401497fc69997d923486ed40fce9df42356667e9 100644
+--- a/ReactCommon/cxxreact/NativeToJsBridge.cpp
++++ b/ReactCommon/cxxreact/NativeToJsBridge.cpp
+@@ -24,6 +24,7 @@
+ #include "SystraceSection.h"
+ 
+ #include <memory>
++#include <mutex>
+ 
+ #ifdef WITH_FBSYSTRACE
+ #include <fbsystrace.h>
+@@ -35,6 +36,8 @@ using fbsystrace::FbSystraceAsyncFlow;
+ namespace facebook {
+ namespace react {
+ 
++std::mutex mtx;
++
+ // This class manages calls from JS to native code.
+ class JsToNativeBridge : public react::ExecutorDelegate {
+  public:
+@@ -142,6 +145,7 @@ void NativeToJsBridge::loadBundle(
+         if (bundleRegistry) {
+           executor->setBundleRegistry(std::move(bundleRegistry));
+         }
++        std::lock_guard<std::mutex> lock(mtx);
+         try {
+           executor->loadBundle(
+               std::move(*startupScript), std::move(startupScriptSourceURL));
 diff --git a/ReactCommon/hermes/inspector/chrome/Connection.cpp b/ReactCommon/hermes/inspector/chrome/Connection.cpp
 index 7101eb22473b4af616888b27ed5387bbe78752cc..33794db54d7d0bfd5e12fc0578f29f58ebeda0bf 100644
 --- a/ReactCommon/hermes/inspector/chrome/Connection.cpp
